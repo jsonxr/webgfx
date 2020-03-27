@@ -22,6 +22,7 @@ module.exports = {
     ]),
 
     new WasmPackPlugin({
+      outName: 'webgfx',
       crateDirectory: __dirname,
     }),
   ]
