@@ -1,14 +1,14 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub struct Camera {
+pub struct Scene {
   pub id: u32,
 }
 
 #[wasm_bindgen]
-impl Camera {
+impl Scene {
   #[wasm_bindgen(constructor)]
-  pub fn new() -> Camera {
-    Camera { id: 1 }
+  pub fn new() -> Scene {
+    Scene { id: 1 }
   }
 }

@@ -46,9 +46,9 @@ This library probably isn't usable until the following are implemented fully:
 
   allow RUST to talk directly to Web APIs without the overhead of making js shims. Allow garbage collection to work in Javascript so don't have to manually free Rust created objects.
 
-  - https://github.com/WebAssembly/interface-types/blob/master/proposals/interface-types/Explainer.md
-  - https://github.com/WebAssembly/reference-types/blob/master/proposals/reference-types/Overview.md
-  - https://github.com/WebAssembly/gc/blob/master/proposals/gc/Overview.md
+  - https://github.com/WebAssembly/interface-types
+  - https://github.com/WebAssembly/reference-types
+  - https://github.com/WebAssembly/gc
 
 - WebGPU
 

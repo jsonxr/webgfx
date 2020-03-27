@@ -11,8 +11,26 @@ use web_sys::console;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 
-mod camera;
-pub use camera::Camera;
+mod box_geometry;
+pub use box_geometry::BoxGeometry;
+
+mod cameras;
+pub use cameras::PerspectiveCamera;
+
+mod mesh;
+pub use mesh::Mesh;
+
+mod mesh_basic_material;
+pub use mesh_basic_material::MeshBasicMaterial;
+
+mod renderers;
+pub use renderers::*;
+
+mod scene;
+pub use scene::*;
+
+mod vectors;
+pub use vectors::*;
 
 // This is like the `main` function, except for JavaScript.
 #[wasm_bindgen(start)]
