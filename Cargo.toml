@@ -6,7 +6,7 @@ version = "0.0.1"
 authors = ["Jason Rowland <jason@snowcapstudios.com>"]
 categories = ["wasm"]
 license = "LICENSE"
-repository = ""
+repository = "git@github.com:jsonxr/webgfx.git"
 readme = "README.md"
 edition = "2018"
 

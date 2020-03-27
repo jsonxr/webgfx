@@ -1,48 +1,60 @@
-## How to install
+# webgfx
+
+A minimal graphics library inspired by three.js written in Rust, compiled to wasm in order to be as fast as possible in the browser. Initially rendered via WebGL with an eye towards WebGPU and modern browser developments. Currently probably slower than using webgl directly from js (see Future section) 
+
+# How to install
 
 ```sh
-npm install
+npm install webgfx
 ```
 
-## How to run in debug mode
+# How to use
 
-```sh
-# Builds the project and opens it in a new browser tab. Auto-reloads when the project changes.
-npm start
+### index.html
+```html
+<html>
+<body>
+  <script module="">
+  <canvas id="canvas"></canvas>
+</body>
+</html>
 ```
 
-## How to build in release mode
+### index.js
+```javascript
+import { BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Renderer, Scene } from 'webgfx';
 
-```sh
-# Builds the project and places it into the `dist` folder.
-npm run build
+// 1. Build the Scene
+const geometry = new BoxGeometry(1, 1, 1);
+const material = new MeshBasicMaterial();
+const cube = new Mesh(geometry, material);
+const scene = new Scene();
+scene.add(cube);
+
+// 2. Render the Scene statically (not in an animation loop)
+const camera = new PerspectiveCamera();
+const canvas = document.getElementById('canvas');
+const renderer = new WebGLRenderer({ canvas });
+renderer.render(scene, camera);
 ```
 
-## How to run unit tests
+# Future
 
-```sh
-# Runs tests in Firefox
-npm test -- --firefox
+This library probably isn't usable until the following are implemented fully:
+  
+- Wasm Host Bindings
 
-# Runs tests in Chrome
-npm test -- --chrome
+  allow RUST to talk directly to Web APIs without the overhead of making js shims. Allow garbage collection to work in Javascript so don't have to manually free Rust created objects.
 
-# Runs tests in Safari
-npm test -- --safari
-```
+  - https://github.com/WebAssembly/interface-types/blob/master/proposals/interface-types/Explainer.md
+  - https://github.com/WebAssembly/reference-types/blob/master/proposals/reference-types/Overview.md
+  - https://github.com/WebAssembly/gc/blob/master/proposals/gc/Overview.md
 
-## What does each file do?
+- WebGPU
 
-* `Cargo.toml` contains the standard Rust metadata. You put your Rust dependencies in here. You must change this file with your details (name, description, version, authors, categories)
+  This is a new spec that dramatically decreases the CPU overhead of sending a scene to the GPU. WebGL is a deprecated API that only allows for a small number of calls in each frame. Until this is official, will be rendered as WebGL.
 
-* `package.json` contains the standard npm metadata. You put your JavaScript dependencies in here. You must change this file with your details (author, name, version)
+  - https://gpuweb.github.io/gpuweb/
+  - https://github.com/gfx-rs/wgpu-rs/issues/101
+  - https://github.com/rust-gamedev/wg/issues/51
 
-* `webpack.config.js` contains the Webpack configuration. You shouldn't need to change this, unless you have very special needs.
-
-* The `js` folder contains your JavaScript code (`index.js` is used to hook everything into Webpack, you don't need to change it).
-
-* The `src` folder contains your Rust code.
-
-* The `static` folder contains any files that you want copied as-is into the final build. It contains an `index.html` file which loads the `index.js` file.
-
-* The `tests` folder contains your Rust unit tests.
