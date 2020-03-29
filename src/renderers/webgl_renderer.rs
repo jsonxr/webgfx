@@ -1,30 +1,63 @@
 use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use serde::{Serialize, Deserialize};
-use serde_wasm_bindgen::*;
+use js_sys::{Reflect};
 use web_sys::{console, HtmlCanvasElement, WebGlProgram, WebGlRenderingContext, WebGlShader};
 
 use super::super::cameras::PerspectiveCamera;
 use super::super::scene::Scene;
 
-//struct MyError;
+/**
+ * Creates a canvas given options as an input. If "canvas" is provided, it uses
+ * it, otherwise it will append a canvas to the body.
+ */
+fn get_or_create_canvas(options: &JsValue) -> Result<HtmlCanvasElement, JsValue> {
+  if !options.is_undefined() {
+    let ele: JsValue = Reflect::get(&options, &JsValue::from_str("canvas"))?;
+    // options = { canvas = null }
+    if ele.is_null() {
+      return Err(JsValue::from_str("new WebGLRenderer(): canvas can not be null."));
+    }
 
-#[wasm_bindgen]
-pub struct WebGLRenderer {
-  canvas: Option<HtmlCanvasElement>,
-  context: Option<WebGlRenderingContext>,
-  pub width: u32,
-  height: u32,
+    // options = { canvas: document.getElementById('canvas') }
+    if !ele.is_undefined() {
+      console::log_1(&JsValue::from_str("Return here!"));
+      let canvas = HtmlCanvasElement::from(JsValue::from(ele));
+      return Ok(canvas);
+    }
+  }
 
-  secret: u32,
+  // options = { }
+  let window = web_sys::window().expect("no global `window` exists");
+  let document = window.document().expect("should have a document on window");
+  let body = document.body().expect("document should have a body");
+  let canvas_ele = document.create_element("canvas")?;
+  body.append_child(&canvas_ele)?;
+  let canvas = HtmlCanvasElement::from(JsValue::from(canvas_ele));
+  return Ok(canvas);
 }
 
+#[wasm_bindgen(inspectable)]
+pub struct WebGLRenderer {
+  _canvas: HtmlCanvasElement,
+  context: WebGlRenderingContext,
+  
+  #[wasm_bindgen(readonly)]
+  pub width: u32,
 
-// #[derive(Serialize, Deserialize, Debug)]
-// struct WebGLRendererOptions<'a> {
-//   pub canvas: &'a HtmlCanvasElement,
-//   pub callback: &'a js_sys::Function,
-// }
+  #[wasm_bindgen(readonly)]
+  pub height: u32,
+}
+
+impl WebGLRenderer {
+  pub fn new(canvas: HtmlCanvasElement, context: WebGlRenderingContext) -> WebGLRenderer {
+    WebGLRenderer {
+      _canvas: canvas,
+      context,
+      width: 10,
+      height: 10,
+    }
+  }
+}
+
 
 #[wasm_bindgen]
 impl WebGLRenderer {
@@ -32,84 +65,15 @@ impl WebGLRenderer {
    *
    */
   #[wasm_bindgen(constructor)]
-  pub fn new(values: JsValue) -> WebGLRenderer {
-    console::log_1(&JsValue::from_str("values..."));
-    console::log_1(&values);
-
-    // let value: std::result::Result<WebGLRendererOptions, serde_wasm_bindgen::Error> = serde_wasm_bindgen::from_value(values);
-    // let v = value.unwrap();
-    // console::log_1(&JsValue::from(v.canvas));
-    // console::log_1(&JsValue::from(v.callback));
-
-    WebGLRenderer {
-      canvas: None,
-      context: None,
-      width: 960,
-      height: 540,
-      secret: 0,
-    }
-  }
-
-  /**
-   *
-   */
-  pub fn set_size(&mut self, width: u32, height: u32) -> Result<(), JsValue> {
-    self.width = width;
-    self.height = height;
-    Ok(())
-  }
-
-  #[wasm_bindgen(js_name = setCanvas)]
-  pub fn set_canvas(&mut self, canvas: HtmlCanvasElement) -> Result<(), JsValue> {
-    match canvas.dyn_into::<HtmlCanvasElement>() {
-      Ok(canvas) => {
-        match canvas.get_context("webgl")? {
-          Some(context) => {
-            console::log_1(&JsValue::from_str("yes, have context"));
-            self.canvas = Some(canvas);
-            self.context = Some(WebGlRenderingContext::from(JsValue::from(context)));
-          }
-          None => {
-            return Err(JsValue::from_str("Can't get webgl context from canvas"));
-          }
-        }
-        Ok(())
-      }
-      Err(_) => Err(JsValue::from_str("but i'm not a canvas")),
-    }
-  }
-
-  /**
-   * Sets context
-   */
-  #[wasm_bindgen(js_name = setContext)]
-  pub fn set_context(&mut self, context: WebGlRenderingContext) -> Result<(), JsValue> {
-    match context.dyn_into::<WebGlRenderingContext>() {
-      Ok(context) => {
-        console::log_1(&context);
-        self.context = Some(context);
-        Ok(())
-      }
-      Err(_) => Err(JsValue::from_str("but i'm not a context")),
-    }
+  pub fn wasm_new(options: &JsValue) -> Result<WebGLRenderer, JsValue> {
+    let canvas: HtmlCanvasElement = get_or_create_canvas(&options)?;
+    let context = canvas.get_context("webgl")?;
+    let context = WebGlRenderingContext::from(JsValue::from(context));
+    return Ok(WebGLRenderer::new(canvas, context));
   }
 
   pub fn render(&self, _scene: &Scene, _camera: &PerspectiveCamera) -> Result<(), JsValue> {
-    // let document = web_sys::window().unwrap().document().unwrap();
-    // let canvas = document.get_element_by_id("canvas").unwrap();
-    // let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
-
-    // let context = self.canvas
-    //   .get_context("webgl")?
-    //   .unwrap()
-    //   .dyn_into::<WebGlRenderingContext>()?;
-    if let Some(_context) = self.context.as_ref() {
-      println!("context is not null");
-    } else {
-      return Err(JsValue::from_str("canvas not set"));
-    }
-
-    let context = self.context.as_ref().unwrap();
+    let context = &self.context;
     let vert_shader_str = include_str!("shaders/vert.glsl");
     let vert_shader = compile_shader(
       &context,

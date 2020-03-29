@@ -11,11 +11,11 @@ use web_sys::console;
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 
-mod box_geometry;
-pub use box_geometry::BoxGeometry;
-
 mod cameras;
 pub use cameras::PerspectiveCamera;
+
+mod geometry;
+pub use geometry::*;
 
 mod mesh;
 pub use mesh::Mesh;
@@ -40,9 +40,7 @@ pub fn main_js() -> Result<(), JsValue> {
     #[cfg(debug_assertions)]
     console_error_panic_hook::set_once();
 
-
     // Your code goes here!
     console::log_1(&JsValue::from_str("Hello world from rust!"));
-
     Ok(())
 }

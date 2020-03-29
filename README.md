@@ -1,6 +1,7 @@
 # webgfx
 
-A minimal graphics library inspired by three.js written in Rust, compiled to wasm in order to be as fast as possible in the browser. Initially rendered via WebGL with an eye towards WebGPU and modern browser developments. Currently probably slower than using webgl directly from js (see Future section) 
+A graphics library inspired by three.js compiled to WebAssembly. The goal of this library is to be as fast as possible to write 3d graphics in a browser from javascript. This library can not achieve this goal until the interface-types proposal (formally known as host bindings) is implemented. Without this, there is a lot of marshalling between js and WebAssembly.
+
 
 # How to install
 
@@ -14,7 +15,7 @@ npm install webgfx
 ```html
 <html>
 <body>
-  <script module="">
+  <script module="index.js">
   <canvas id="canvas"></canvas>
 </body>
 </html>
@@ -33,8 +34,9 @@ scene.add(cube);
 
 // 2. Render the Scene statically (not in an animation loop)
 const camera = new PerspectiveCamera();
-const canvas = document.getElementById('canvas');
-const renderer = new WebGLRenderer({ canvas });
+let renderer = new WebGLRenderer({ canvas: document.getElementById('canvas') });
+//     let renderer = new WebGLRenderer();
+
 renderer.render(scene, camera);
 ```
 
@@ -46,6 +48,8 @@ This library probably isn't usable until the following are implemented fully:
 
   allow RUST to talk directly to Web APIs without the overhead of making js shims. Allow garbage collection to work in Javascript so don't have to manually free Rust created objects.
 
+  - https://github.com/WebAssembly/proposals
+  - https://fitzgen.github.io/wasm-cg-wasm-bindgen/#51
   - https://github.com/WebAssembly/interface-types
   - https://github.com/WebAssembly/reference-types
   - https://github.com/WebAssembly/gc
