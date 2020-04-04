@@ -1,23 +1,23 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug)]
 pub struct Geometry {
+  pub id: u32,
+
 }
 
-// Rust implementation
-impl Geometry {
-  pub fn new() -> Geometry {
-    Geometry {
-    }
-  }
+pub struct Geo<'life> {
+  pub id: u32,
+  pub vertices: &'life [f32],
 }
 
 #[wasm_bindgen]
 impl Geometry {
   #[wasm_bindgen(constructor)]
-  pub fn wasm_new() -> Geometry {
+  pub fn wasm_new(_vertices: Box<[JsValue]>) -> Geometry {
     Geometry {
+      id: 1,
     }
   }
 }

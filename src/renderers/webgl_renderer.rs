@@ -2,38 +2,10 @@ use wasm_bindgen::prelude::*;
 use js_sys::{Reflect};
 use web_sys::{console, HtmlCanvasElement, WebGlProgram, WebGlRenderingContext, WebGlShader};
 
-use super::super::cameras::PerspectiveCamera;
+// use super::super::cameras::PerspectiveCamera;
 use super::super::scene::Scene;
-
-/**
- * Creates a canvas given options as an input. If "canvas" is provided, it uses
- * it, otherwise it will append a canvas to the body.
- */
-fn get_or_create_canvas(options: &JsValue) -> Result<HtmlCanvasElement, JsValue> {
-  if !options.is_undefined() {
-    let ele: JsValue = Reflect::get(&options, &JsValue::from_str("canvas"))?;
-    // options = { canvas = null }
-    if ele.is_null() {
-      return Err(JsValue::from_str("new WebGLRenderer(): canvas can not be null."));
-    }
-
-    // options = { canvas: document.getElementById('canvas') }
-    if !ele.is_undefined() {
-      console::log_1(&JsValue::from_str("Return here!"));
-      let canvas = HtmlCanvasElement::from(JsValue::from(ele));
-      return Ok(canvas);
-    }
-  }
-
-  // options = { }
-  let window = web_sys::window().expect("no global `window` exists");
-  let document = window.document().expect("should have a document on window");
-  let body = document.body().expect("document should have a body");
-  let canvas_ele = document.create_element("canvas")?;
-  body.append_child(&canvas_ele)?;
-  let canvas = HtmlCanvasElement::from(JsValue::from(canvas_ele));
-  return Ok(canvas);
-}
+use super::super::mesh::Mesh;
+//use super::super::geometry::Geometry;
 
 #[wasm_bindgen(inspectable)]
 pub struct WebGLRenderer {
@@ -72,7 +44,7 @@ impl WebGLRenderer {
     return Ok(WebGLRenderer::new(canvas, context));
   }
 
-  pub fn render(&self, _scene: &Scene, _camera: &PerspectiveCamera) -> Result<(), JsValue> {
+  pub fn render(&self, scene: &Scene) -> Result<(), JsValue> {
     let context = &self.context;
     let vert_shader_str = include_str!("shaders/vert.glsl");
     let vert_shader = compile_shader(
@@ -104,6 +76,10 @@ impl WebGLRenderer {
     // As a result, after `Float32Array::view` we have to be very careful not to
     // do any memory allocations before it's dropped.
     unsafe {
+      let mesh = &scene.meshes.get(0);
+      if mesh.is_some() {
+        let mesh = mesh.unwrap();
+
       let vert_array = js_sys::Float32Array::view(&vertices);
 
       context.buffer_data_with_array_buffer_view(
@@ -111,6 +87,8 @@ impl WebGLRenderer {
         &vert_array,
         WebGlRenderingContext::STATIC_DRAW,
       );
+      }
+      
     }
 
     context.vertex_attrib_pointer_with_i32(0, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
@@ -122,7 +100,7 @@ impl WebGLRenderer {
     context.draw_arrays(
       WebGlRenderingContext::TRIANGLES,
       0,
-      (vertices.len() / 3) as i32,
+      (&vertices.len() / 3) as i32,
     );
     Ok(())
   }
@@ -180,4 +158,35 @@ pub fn link_program(
         .unwrap_or_else(|| String::from("Unknown error creating program object")),
     )
   }
+}
+
+
+/**
+ * Creates a canvas given options as an input. If "canvas" is provided, it uses
+ * it, otherwise it will append a canvas to the body.
+ */
+fn get_or_create_canvas(options: &JsValue) -> Result<HtmlCanvasElement, JsValue> {
+  if !options.is_undefined() {
+    let ele: JsValue = Reflect::get(&options, &JsValue::from_str("canvas"))?;
+    // options = { canvas = null }
+    if ele.is_null() {
+      return Err(JsValue::from_str("new WebGLRenderer(): canvas can not be null."));
+    }
+
+    // options = { canvas: document.getElementById('canvas') }
+    if !ele.is_undefined() {
+      console::log_1(&JsValue::from_str("Return here!"));
+      let canvas = HtmlCanvasElement::from(JsValue::from(ele));
+      return Ok(canvas);
+    }
+  }
+
+  // options = { }
+  let window = web_sys::window().expect("no global `window` exists");
+  let document = window.document().expect("should have a document on window");
+  let body = document.body().expect("document should have a body");
+  let canvas_ele = document.create_element("canvas")?;
+  body.append_child(&canvas_ele)?;
+  let canvas = HtmlCanvasElement::from(JsValue::from(canvas_ele));
+  return Ok(canvas);
 }
