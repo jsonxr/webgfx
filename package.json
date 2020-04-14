@@ -1,16 +1,28 @@
 {
-  "author": "Jason Rowland <jason@snowcapstudios.com>",
-  "name": "webgfx",
+  "name": "webgfx-rs",
+  "collaborators": [
+    "Jason Rowland <jason@snowcapstudios.com>"
+  ],
+  "description": "Graphics engine for the web",
   "version": "0.0.1",
+  "license": "LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:jsonxr/webgfx.git"
+  },
   "scripts": {
     "build": "rimraf dist pkg && webpack",
     "build:wasm": "rimraf pkg && wasm-pack build",
     "start": "rimraf dist pkg && webpack-dev-server --open -d",
     "test": "cargo test && wasm-pack test --headless"
   },
-  "dependencies": {
-    "webgfx": "./pkg"
-  },
+  "files": [
+    "webgfx_rs_bg.wasm",
+    "webgfx_rs.js",
+    "webgfx_rs.d.ts"
+  ],
+  "module": "webgfx_rs.js",
+  "types": "webgfx_rs.d.ts",
   "devDependencies": {
     "@wasm-tool/wasm-pack-plugin": "^1.1.0",
     "copy-webpack-plugin": "^5.0.3",
@@ -18,5 +30,6 @@
     "webpack-cli": "^3.3.3",
     "webpack-dev-server": "^3.7.1",
     "rimraf": "^3.0.0"
-  }
+  },
+  "sideEffects": false
 }

@@ -7,7 +7,7 @@ const dist = path.resolve(__dirname, "dist");
 module.exports = {
   mode: "production",
   entry: {
-    index: "./js/bootstrap.js"
+    index: "./src/js/bootstrap.js"
   },
   output: {
     path: dist,

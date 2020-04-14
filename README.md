@@ -62,3 +62,6 @@ This library probably isn't usable until the following are implemented fully:
   - https://github.com/gfx-rs/wgpu-rs/issues/101
   - https://github.com/rust-gamedev/wg/issues/51
 
+
+Accessing raw memory:
+https://egghead.io/lessons/webpack-access-webassembly-memory-directly-from-javascript
