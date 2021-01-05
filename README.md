@@ -42,7 +42,7 @@ renderer.render(scene, camera);
 
 # Future
 
-This library probably isn't usable until the following are implemented fully:
+This library isn't usable until the following are implemented fully:
   
 - Wasm Host Bindings
 
