@@ -11,8 +11,8 @@ scene.add(cube);
 console.log('scene.len: ', scene.len());
 
 // 2. Render the Scene statically (not in an animation loop)
-const camera = new PerspectiveCamera({ x: 0, y: 100, z: 0});
-const renderer = new WebGLRenderer({canvas: document.getElementById('canvas')});
+const camera = new PerspectiveCamera({ x: 0, y: 100, z: 0 });
+const renderer = new WebGLRenderer({ canvas: document.getElementById('canvas') });
 console.log(renderer);
 console.log(geometry);
 //renderer.render(scene, camera);

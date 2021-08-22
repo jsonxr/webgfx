@@ -7,9 +7,9 @@ const dist = path.resolve(__dirname, "dist");
 module.exports = (env, args) => {
   const isProduction = (args.mode === 'production');
   return {
-    mode: "production",
+    mode: "development",
     entry: {
-      index: "./js/bootstrap.js"
+      index: "./js/bootstrap.js",
     },
     output: {
       path: dist,

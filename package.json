@@ -3,7 +3,7 @@
   "name": "webgfx",
   "version": "0.0.1",
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "webpack --mode development",
     "build:wasm": "rimraf pkg && wasm-pack build",
     "start": "webpack-dev-server --mode=development --port 8080 --open",
     "test": "cargo test && wasm-pack test --headless"
