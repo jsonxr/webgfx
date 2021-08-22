@@ -43,7 +43,7 @@ renderer.render(scene, camera);
 # Future
 
 This library probably isn't usable until the following are implemented fully:
-  
+
 - Wasm Host Bindings
 
   allow RUST to talk directly to Web APIs without the overhead of making js shims. Allow garbage collection to work in Javascript so don't have to manually free Rust created objects.
@@ -58,6 +58,7 @@ This library probably isn't usable until the following are implemented fully:
 
   This is a new spec that dramatically decreases the CPU overhead of sending a scene to the GPU. WebGL is a deprecated API that only allows for a small number of calls in each frame. Until this is official, will be rendered as WebGL.
 
+  - https://sotrh.github.io/learn-wgpu/beginner/tutorial3-pipeline/#wgsl
   - https://gpuweb.github.io/gpuweb/
   - https://github.com/gfx-rs/wgpu-rs/issues/101
   - https://github.com/rust-gamedev/wg/issues/51

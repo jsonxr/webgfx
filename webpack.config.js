@@ -4,26 +4,33 @@ const WasmPackPlugin = require("@wasm-tool/wasm-pack-plugin");
 
 const dist = path.resolve(__dirname, "dist");
 
-module.exports = {
-  mode: "production",
-  entry: {
-    index: "./js/bootstrap.js"
-  },
-  output: {
-    path: dist,
-    filename: "[name].js"
-  },
-  devServer: {
-    contentBase: dist,
-  },
-  plugins: [
-    new CopyPlugin([
-      path.resolve(__dirname, "static")
-    ]),
+module.exports = (env, args) => {
+  const isProduction = (args.mode === 'production');
+  return {
+    mode: "production",
+    entry: {
+      index: "./js/bootstrap.js"
+    },
+    output: {
+      path: dist,
+      filename: "[name].js"
+      //filename: isProduction ? '[name].[contenthash].js' : '[name].[hash].js',
+    },
+    //entry: './index.js',
 
-    new WasmPackPlugin({
-      outName: 'webgfx',
-      crateDirectory: __dirname,
-    }),
-  ]
-};
+    experiments: {
+      asyncWebAssembly: true,
+    },
+    plugins: [
+      new CopyPlugin({
+        patterns: [
+          { from: path.resolve(__dirname, "static"), to: dist },
+        ]
+      }),
+      new WasmPackPlugin({
+        outName: 'webgfx',
+        crateDirectory: __dirname,
+      }),
+    ]
+  };
+}

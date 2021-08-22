@@ -13,6 +13,7 @@ edition = "2018"
 [lib]
 crate-type = ["cdylib", "rlib"]
 
+
 [profile.release]
 # This makes the compiled code faster and smaller, but it makes compiling slower,
 # so it's only enabled in release mode.
@@ -23,47 +24,54 @@ lto = true
 #default = ["wee_alloc"]
 
 [dependencies]
+console_error_panic_hook = "0.1"
+js-sys = "0.3"
+lazy_static = "1.4.0"
+nalgebra = "0.29.0"
+
 # The `wasm-bindgen` crate provides the bare minimum functionality needed
 # to interact with JavaScript.
-wasm-bindgen = "0.2"
+wasm-bindgen = "0.2.76"
 
 # `wee_alloc` is a tiny allocator for wasm that is only ~1K in code size
 # compared to the default allocator's ~10K. However, it is slower than the default
 # allocator, so it's not enabled by default.
-wee_alloc = { version = "0.4", optional = true }
+wee_alloc = { version = "0.4.5", optional = true }
 
-js-sys = "0.3"
+
 
 # Used for serializing things from js to rust with wasm_bindgen
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0.128", features = ["derive"] }
 
-serde-wasm-bindgen = "0.1.3"
+serde-wasm-bindgen = "0.3.0"
 
 # The `web-sys` crate allows you to interact with the various browser APIs,
 # like the DOM.
 [dependencies.web-sys]
-version = "0.3"
+version = "0.3.53"
 features = [
+  'console',
   'Document',
   'Element',
+  'EventTarget',
   'HtmlCanvasElement',
+  'MouseEvent',
   'WebGlBuffer',
-  'WebGlRenderingContext',
   'WebGlProgram',
+  'WebGlRenderingContext',
   'WebGlShader',
+  'WebGlUniformLocation',
   'Window',
-  'console',
 ]
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
 # all the `std::fmt` and `std::panicking` infrastructure, so it's only enabled
 # in debug mode.
-[target."cfg(debug_assertions)".dependencies]
-console_error_panic_hook = "0.1"
+
 
 # These crates are used for running unit tests.
 [dev-dependencies]
 wasm-bindgen-test = "0.2"
-futures = "0.1"
+futures = "0.3"
 js-sys = "0.3"
 wasm-bindgen-futures = "0.3"
